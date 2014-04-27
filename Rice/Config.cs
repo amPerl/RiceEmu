@@ -12,6 +12,7 @@ namespace Rice
         public static int LobbyPort = 11011;
         public static int GamePort = 11021;
         public static int AreaPort = 11031;
+        public static int RankingPort = 11041;
 
         public static void Load(string path = "config.json")
         {

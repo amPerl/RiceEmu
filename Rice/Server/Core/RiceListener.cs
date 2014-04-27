@@ -36,7 +36,7 @@ namespace Rice.Server.Core
             var tcpClient = listener.EndAcceptTcpClient(result);
             var riceClient = new RiceClient(tcpClient, this, exchangeRequired);
 
-            Log.WriteLine("Accepted client from {0}", tcpClient.Client.RemoteEndPoint);
+            Log.WriteLine("Accepted client from {0} on {1}", tcpClient.Client.RemoteEndPoint, port);
 
             clients.Add(riceClient);
             listener.BeginAcceptTcpClient(onAccept, this.listener);

@@ -11,10 +11,11 @@ namespace Rice.Server.Core
             Auth = 1,
             Lobby = 2,
             Game = 4,
-            Area = 8
+            Area = 8,
+            Ranking = 16
         }
 
-        public static RiceListener Auth, Lobby, Game, Area;
+        public static RiceListener Auth, Lobby, Game, Area, Ranking;
 
         public static void Initialize()
         {
@@ -24,6 +25,7 @@ namespace Rice.Server.Core
             Lobby = new RiceListener(Config.LobbyPort);
             Game = new RiceListener(Config.GamePort);
             Area = new RiceListener(Config.AreaPort, false);
+            Ranking = new RiceListener(Config.RankingPort);
 
             loadParsers();
         }
@@ -50,6 +52,9 @@ namespace Rice.Server.Core
 
                         if (attrib.Handlers.HasFlag(ServerType.Area))
                             Area.SetParser(id, parser);
+
+                        if (attrib.Handlers.HasFlag(ServerType.Ranking))
+                            Ranking.SetParser(id, parser);
                     }
                 }
             }
@@ -64,6 +69,7 @@ namespace Rice.Server.Core
             Lobby.Start();
             Game.Start();
             Area.Start();
+            Ranking.Start();
         }
     }
 }

@@ -43,11 +43,11 @@ namespace Rice.Server.Packets.Auth
             ack.Writer.Write(Environment.TickCount); // Ranking Update Time
 
             // 127.0.0.1 for local testing
-            ack.Writer.Write(2130706433u); // GameServer IP
-            ack.Writer.Write(2130706433u); // LobbyServer IP
-            ack.Writer.Write(2130706433u); // AreaServer 1 IP
-            ack.Writer.Write(2130706433u); // AreaServer 2 IP
-            ack.Writer.Write(2130706433u); // Ranking IP
+            ack.Writer.Write(16777343u); // GameServer IP
+            ack.Writer.Write(16777343u); // LobbyServer IP
+            ack.Writer.Write(16777343u); // AreaServer 1 IP
+            ack.Writer.Write(16777343u); // AreaServer 2 IP
+            ack.Writer.Write(16777343u); // Ranking IP
 
             ack.Writer.Write((ushort)11021); // GameServer Port
             ack.Writer.Write((ushort)11011); // LobbyServer Port
