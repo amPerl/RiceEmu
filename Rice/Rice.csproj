@@ -50,6 +50,9 @@
     <Compile Include="Server\Packets\Auth\Auth.cs" />
     <Compile Include="Server\PacketIO.cs" />
     <Compile Include="Server\Core\RicePacket.cs" />
+    <Compile Include="Server\Packets\Lobby\User.cs" />
+    <Compile Include="Server\Packets\Lobby\Misc.cs" />
+    <Compile Include="Server\Packets\Static.cs" />
     <Compile Include="Server\RiceServer.cs" />
   </ItemGroup>
   <ItemGroup>

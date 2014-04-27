@@ -8,10 +8,10 @@ namespace Rice.Server.Core
         [Flags]
         public enum ServerType
         {
-            Auth,
-            Lobby,
-            Game,
-            Area
+            Auth = 1,
+            Lobby = 2,
+            Game = 4,
+            Area = 8
         }
 
         public static RiceListener Auth, Lobby, Game, Area;

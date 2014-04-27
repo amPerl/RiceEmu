@@ -4,7 +4,7 @@ using System.Text;
 using System.Linq;
 using Rice.Server.Core;
 
-namespace Rice.Server.Packets
+namespace Rice.Server.Packets.Auth
 {
     public static class Authentication
     {

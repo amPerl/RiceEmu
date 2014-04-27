@@ -38,6 +38,19 @@ namespace Rice.Server
 
             Write(buf);
         }
+
+        public void WriteASCIIStatic(string str, int maxLength)
+        {
+            if (str.Length > maxLength)
+                str = str.Substring(0, maxLength);
+
+            byte[] stringBuf = Encoding.ASCII.GetBytes(str);
+
+            byte[] buf = new byte[maxLength];
+            Array.Copy(stringBuf, 0, buf, 0, stringBuf.Length);
+
+            Write(buf);
+        }
     }
 
     public class PacketReader : BinaryReader
