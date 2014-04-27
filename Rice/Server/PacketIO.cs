@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using Rice.Server.Structures;
 
 namespace Rice.Server
 {
@@ -18,6 +19,9 @@ namespace Rice.Server
 
         public void WriteUnicode(string str, bool lengthPrefix = true)
         {
+            if (str == null)
+                str = "";
+
             byte[] buf = Encoding.Unicode.GetBytes(str + "\0");
 
             if (lengthPrefix)
@@ -28,6 +32,9 @@ namespace Rice.Server
 
         public void WriteUnicodeStatic(string str, int maxLength)
         {
+            if (str == null)
+                str = "";
+
             if (str.Length > maxLength) 
                 str = str.Substring(0, maxLength);
             
@@ -41,6 +48,9 @@ namespace Rice.Server
 
         public void WriteASCIIStatic(string str, int maxLength)
         {
+            if (str == null)
+                str = "";
+
             if (str.Length > maxLength)
                 str = str.Substring(0, maxLength);
 
@@ -50,6 +60,11 @@ namespace Rice.Server
             Array.Copy(stringBuf, 0, buf, 0, stringBuf.Length);
 
             Write(buf);
+        }
+
+        public void Write(ISerializable structure)
+        {
+            structure.Serialize(this);
         }
     }
 

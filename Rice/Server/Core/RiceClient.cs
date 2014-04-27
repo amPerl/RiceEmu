@@ -75,8 +75,6 @@ namespace Rice.Server.Core
                 packetLength = BitConverter.ToUInt16(buffer, 0);
                 packetID = BitConverter.ToUInt16(buffer, 2);
 
-                Log.WriteLine("Received length: {0}", packetLength);
-
                 bytesToRead = packetLength - 4;
                 buffer = new byte[bytesToRead];
                 ns.BeginRead(buffer, 0, bytesToRead, onData, null);
@@ -122,12 +120,9 @@ namespace Rice.Server.Core
 
         public void Kill()
         {
-            if (tcp.Connected)
-            {
-                tcp.Close();
-            }
+            Log.WriteLine("Killing off client {0}.", tcp.Client.RemoteEndPoint);
 
-            Log.WriteLine("Killed off client {0}.", tcp.Client.RemoteEndPoint);
+            tcp.Close();
         }
     }
 }

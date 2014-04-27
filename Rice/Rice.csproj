@@ -47,13 +47,19 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\Core\RiceListener.cs" />
     <Compile Include="Server\Core\RiceClient.cs" />
+    <Compile Include="Server\Packets\Area\Misc.cs" />
     <Compile Include="Server\Packets\Auth\Auth.cs" />
     <Compile Include="Server\PacketIO.cs" />
     <Compile Include="Server\Core\RicePacket.cs" />
+    <Compile Include="Server\Packets\Game\Character.cs" />
+    <Compile Include="Server\Packets\Game\Misc.cs" />
     <Compile Include="Server\Packets\Lobby\User.cs" />
     <Compile Include="Server\Packets\Lobby\Misc.cs" />
     <Compile Include="Server\Packets\Static.cs" />
     <Compile Include="Server\RiceServer.cs" />
+    <Compile Include="Server\Structures\Character.cs" />
+    <Compile Include="Server\Structures\Misc.cs" />
+    <Compile Include="Server\Structures\Vehicle.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

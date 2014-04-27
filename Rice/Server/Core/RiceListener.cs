@@ -50,13 +50,15 @@ namespace Rice.Server.Core
 
         public void Parse(RicePacket packet)
         {
-            Log.WriteLine("{0} parsing {1}.", port, packet.ID);
+            //Log.WriteLine("{0} parsing {1}.", port, packet.ID);
 
             if (parsers.ContainsKey(packet.ID))
                 parsers[packet.ID](packet);
             else
             {
-                Log.WriteLine("Received unknown packet (id {0}) on {1}.", packet.ID, port);
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Log.WriteLine("Received unknown packet (id {0}, {0:X}) on {1}.", packet.ID, port);
+                Console.ForegroundColor = ConsoleColor.Gray;
             }
         }
 
