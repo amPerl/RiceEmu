@@ -28,7 +28,7 @@ namespace Rice.Server.Core
             listener.Start();
             listener.BeginAcceptTcpClient(onAccept, this.listener);
 
-            Log.WriteLine("Started listening on {0}", port);
+            //Log.WriteLine("Started listening on {0}", port);
         }
 
         private void onAccept(IAsyncResult result)
@@ -44,7 +44,7 @@ namespace Rice.Server.Core
 
         public void SetParser(ushort id, Action<RicePacket> parser)
         {
-            Log.WriteLine("Added parser for packet {0} on {1}.", id, port);
+            //Log.WriteLine("Added parser for packet {0} on {1}.", id, port);
             parsers[id] = parser;
         }
 

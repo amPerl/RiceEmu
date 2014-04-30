@@ -11,9 +11,13 @@ namespace Rice
     {
         static void Main(string[] args)
         {
-            Config.Load();
-            RiceServer.Initialize();
+            Console.Title = "Rice";
+
+            Config config = Config.Load();
+            RiceServer.Initialize(config);
+
             RiceServer.Start();
+
             Console.ReadLine();
         }
     }

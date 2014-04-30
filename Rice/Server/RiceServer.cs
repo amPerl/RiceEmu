@@ -16,10 +16,13 @@ namespace Rice.Server.Core
         }
 
         public static RiceListener Auth, Lobby, Game, Area, Ranking;
+        public static Config Config;
 
-        public static void Initialize()
+        public static void Initialize(Config config)
         {
             Log.WriteLine("Initializing RiceServer.");
+
+            RiceServer.Config = config;
 
             Auth = new RiceListener(Config.AuthPort);
             Lobby = new RiceListener(Config.LobbyPort);
@@ -70,6 +73,8 @@ namespace Rice.Server.Core
             Game.Start();
             Area.Start();
             Ranking.Start();
+
+            Log.WriteLine("RiceServer started.");
         }
     }
 }
