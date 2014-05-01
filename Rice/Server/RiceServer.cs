@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
+using System.Collections.Generic;
+using Rice.Game;
 
 namespace Rice.Server.Core
 {
@@ -17,6 +20,9 @@ namespace Rice.Server.Core
 
         public static RiceListener Auth, Lobby, Game, Area, Ranking;
         public static Config Config;
+        public static Random RNG;
+
+        static List<Player> players;
 
         public static void Initialize(Config config)
         {
@@ -29,6 +35,9 @@ namespace Rice.Server.Core
             Game = new RiceListener(Config.GamePort);
             Area = new RiceListener(Config.AreaPort, false);
             Ranking = new RiceListener(Config.RankingPort);
+
+            players = new List<Player>();
+            RNG = new Random();
 
             loadParsers();
         }
@@ -75,6 +84,47 @@ namespace Rice.Server.Core
             Ranking.Start();
 
             Log.WriteLine("RiceServer started.");
+        }
+
+        public static Player[] GetPlayers()
+        {
+            return players.ToArray();
+        }
+
+        public static void AddPlayer(Player player)
+        {
+            players.Add(player);
+        }
+
+        public static void RemovePlayer(Player player)
+        {
+            players.Add(player);
+        }
+
+        public static uint CreateTicket()
+        {
+            Player[] players = GetPlayers();
+
+            bool exists = false;
+            uint ticket = 0;
+
+            do
+            {
+                exists = false;
+                ticket = (uint)RNG.Next();
+
+                foreach (Player p in players)
+                {
+                    if (p.Ticket == ticket)
+                    {
+                        exists = true;
+                        break;
+                    }
+                }
+            }
+            while (exists);
+
+            return ticket;
         }
     }
 }

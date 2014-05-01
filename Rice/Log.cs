@@ -14,8 +14,13 @@ namespace Rice
             string message = String.Format(format, args);
 
             Console.WriteLine("[{0}] {1}", DateTime.Now.ToLongTimeString(), message);
+        }
 
-            File.AppendAllText("ServerLog.txt", String.Format("[{0}] {1}{2}", DateTime.Now, message, Environment.NewLine));
+        public static void WriteError(string format, params object[] args)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            WriteLine(format, args);
+            Console.ForegroundColor = ConsoleColor.Gray;
         }
     }
 }

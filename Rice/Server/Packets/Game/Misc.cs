@@ -38,10 +38,12 @@ namespace Rice.Server.Packets.Game
         public static void FirstPosition(RicePacket packet)
         {
             var ack = new RicePacket(0x30F);
+
             ack.Writer.Write(0L);
             ack.Writer.Write(0L);
             ack.Writer.Write(0L);
             ack.Writer.Write(3);
+
             packet.Sender.Send(ack);
         }
     }

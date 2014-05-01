@@ -12,11 +12,14 @@ namespace Rice
     {
         const string configPath = "server.json";
 
-        public int AuthPort = 11005;
-        public int LobbyPort = 11011;
-        public int GamePort = 11021;
-        public int AreaPort = 11031;
-        public int RankingPort = 11041;
+        public bool DebugMode = true;
+        public string PublicIP = "127.0.0.1";
+
+        public ushort AuthPort = 11005;
+        public ushort LobbyPort = 11011;
+        public ushort GamePort = 11021;
+        public ushort AreaPort = 11031;
+        public ushort RankingPort = 11078;
 
         public string DatabaseHost = "localhost";
         public int DatabasePort = 3306;

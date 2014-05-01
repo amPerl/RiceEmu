@@ -3,6 +3,8 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using Rice.Server.Core;
+using Rice.Game;
+using System.Net;
 
 namespace Rice.Server.Packets.Auth
 {
@@ -15,12 +17,41 @@ namespace Rice.Server.Packets.Auth
             var username = packet.Reader.ReadUnicodeStatic(40);
             var password = packet.Reader.ReadASCII();
 
-            Log.WriteLine("UserAuth: ID: {0}, Password: {1}", username, password);
+            string pwhash = Utilities.MD5(password.Substring(0, password.Length - 1));
+
+            User user = User.Retrieve(username, pwhash);
+
+            if (user == null || user.Status == UserStatus.Invalid)
+            {
+                Log.WriteLine("Attempt to log into non-existant account or use invalid password.");
+
+                var invalid = new RicePacket(22);
+
+                invalid.Writer.Write(0);
+                invalid.Writer.Write(1);
+                invalid.Writer.Write(new byte[68]);
+
+                packet.Sender.Send(invalid);
+                return;
+            }
+            else if (user.Status == UserStatus.Banned)
+            {
+                Log.WriteLine("Attempt to log into suspended account {0}.", user.Username);
+
+                packet.Sender.Error("Your account has been suspended.");
+                packet.Sender.Kill();
+                return;
+            }
+
+            Player player = new Player(user);
+            player.AuthClient = packet.Sender;
+            player.Ticket = RiceServer.CreateTicket();
+            RiceServer.AddPlayer(player);
 
             var ack = new RicePacket(22);
 
-            ack.Writer.Write(new Random().Next(int.MaxValue)); // Ticket
-            ack.Writer.Write(0); // Auth Result (0 is Success, 2 is banned)
+            ack.Writer.Write(player.Ticket); // Ticket
+            ack.Writer.Write(0); // Auth Result
 
             ack.Writer.Write(Environment.TickCount); // Time
             ack.Writer.Write(new byte[64]); // Filler ("STicket")
@@ -28,10 +59,10 @@ namespace Rice.Server.Packets.Auth
             ack.Writer.Write((ushort)23); // ServerList ID
             ack.Writer.Write(1); // Server Count
 
-            ack.Writer.WriteUnicodeStatic("TestServer", 32); // Server Name
+            ack.Writer.WriteUnicodeStatic("Rice Emulator", 32); // Server Name
             ack.Writer.Write(1); // Server ID
 
-            ack.Writer.Write((float)RiceServer.Game.GetClients().Length + 1f); // Player Count
+            ack.Writer.Write((float)RiceServer.GetPlayers().Length); // Player Count
             ack.Writer.Write(7000f); // Max Player Count
 
             ack.Writer.Write(1); // Server State
@@ -42,20 +73,20 @@ namespace Rice.Server.Packets.Auth
             ack.Writer.Write(Environment.TickCount); // Area2 Update Time
             ack.Writer.Write(Environment.TickCount); // Ranking Update Time
 
-            // 127.0.0.1 for local testing
-            ack.Writer.Write(16777343u); // GameServer IP
-            ack.Writer.Write(16777343u); // LobbyServer IP
-            ack.Writer.Write(16777343u); // AreaServer 1 IP
-            ack.Writer.Write(16777343u); // AreaServer 2 IP
-            ack.Writer.Write(16777343u); // Ranking IP
+            byte[] ip = IPAddress.Parse(RiceServer.Config.PublicIP).GetAddressBytes();
+            ack.Writer.Write(ip); // GameServer IP
+            ack.Writer.Write(ip); // LobbyServer IP
+            ack.Writer.Write(ip); // AreaServer 1 IP
+            ack.Writer.Write(ip); // AreaServer 2 IP
+            ack.Writer.Write(ip); // Ranking IP
 
-            ack.Writer.Write((ushort)11021); // GameServer Port
-            ack.Writer.Write((ushort)11011); // LobbyServer Port
-            ack.Writer.Write((ushort)11031); // AreaServer 1 Port
+            ack.Writer.Write(RiceServer.Config.GamePort); // GameServer Port
+            ack.Writer.Write(RiceServer.Config.LobbyPort); // LobbyServer Port
+            ack.Writer.Write(RiceServer.Config.AreaPort); // AreaServer 1 Port
             ack.Writer.Write((ushort)11041); // AreaServer 2 Port
             ack.Writer.Write((ushort)10701); // AreaServer 1 UDP Port
             ack.Writer.Write((ushort)10702); // AreaServer 2 UDP Port
-            ack.Writer.Write((ushort)11078); // Ranking Port
+            ack.Writer.Write(RiceServer.Config.RankingPort); // Ranking Port
 
             ack.Writer.Write((ushort)0); // what
 

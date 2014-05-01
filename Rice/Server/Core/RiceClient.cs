@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Net.Sockets;
+using Rice.Game;
 
 namespace Rice.Server.Core
 {
@@ -14,6 +16,9 @@ namespace Rice.Server.Core
         private int bytesToRead;
         private ushort packetLength, packetID;
 
+        public bool Alive;
+        public Player Player;
+
         public RiceClient(TcpClient tcp, RiceListener parent, bool exchangeRequired)
         {
             this.tcp = tcp;
@@ -21,6 +26,7 @@ namespace Rice.Server.Core
             this.exchangeRequired = exchangeRequired;
 
             ns = tcp.GetStream();
+            Alive = true;
 
             try
             {
@@ -37,7 +43,7 @@ namespace Rice.Server.Core
                     ns.BeginRead(buffer, 0, 4, onHeader, null);
                 }
             }
-            catch { Kill(); }
+            catch (Exception ex) { Kill(ex); }
         }
 
         private void onExchange(IAsyncResult result)
@@ -51,14 +57,13 @@ namespace Rice.Server.Core
                     return;
                 }
 
-                ns.Write(new byte[56], 0, 56); // The client will disable crypto.
-                Log.WriteLine("Returned exchange.");
+                ns.Write(new byte[56], 0, 56);
 
                 buffer = new byte[4];
                 bytesToRead = buffer.Length;
                 ns.BeginRead(buffer, 0, 4, onHeader, null);
             }
-            catch { Kill(); }
+            catch (Exception ex) { Kill(ex); }
         }
 
         private void onHeader(IAsyncResult result)
@@ -79,7 +84,7 @@ namespace Rice.Server.Core
                 buffer = new byte[bytesToRead];
                 ns.BeginRead(buffer, 0, bytesToRead, onData, null);
             }
-            catch { Kill(); }
+            catch (Exception ex) { Kill(ex); }
         }
 
         private void onData(IAsyncResult result)
@@ -100,7 +105,7 @@ namespace Rice.Server.Core
                 bytesToRead = buffer.Length;
                 ns.BeginRead(buffer, 0, 4, onHeader, null);
             }
-            catch { Kill(); }
+            catch (Exception ex) { Kill(ex); }
         }
 
         public void Send(RicePacket packet)
@@ -115,13 +120,33 @@ namespace Rice.Server.Core
                 ns.Write(BitConverter.GetBytes(length), 0, 2);
                 ns.Write(buffer, 0, bufferLength);
             }
-            catch { Kill(); }
+            catch (Exception ex) { Kill(ex); }
         }
 
-        public void Kill()
+        public void Error(string format, params object[] args)
         {
-            Log.WriteLine("Killing off client {0}.", tcp.Client.RemoteEndPoint);
+            var err = new RicePacket(1);
+            err.Writer.WriteUnicode(String.Format(format, args));
+            Send(err);
+        }
 
+        public void Kill(Exception ex)
+        {
+            if (ex is SocketException || ex is IOException)
+            {
+                Kill(); 
+                return;
+            }
+
+            Kill(ex.Message + ": " + ex.StackTrace);
+        }
+
+        public void Kill(string reason = "")
+        {
+            if (!Alive) return;
+            Alive = false;
+
+            Log.WriteLine("Killing off client. {0}", reason);
             tcp.Close();
         }
     }

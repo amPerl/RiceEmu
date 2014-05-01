@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Rice.Game;
 using Rice.Server.Core;
 
 namespace Rice.Server.Packets.Lobby
@@ -20,7 +21,24 @@ namespace Rice.Server.Packets.Lobby
             uint time = packet.Reader.ReadUInt32();
             string stringTicket = packet.Reader.ReadASCIIStatic(0x40);
 
-            // TODO: Verify ticket, discard username
+            Player player = null;
+
+            foreach (var p in RiceServer.GetPlayers())
+            {
+                if (p.Ticket == ticket && p.User.Username.ToLower() == username)
+                {
+                    player = p;
+                    player.LobbyClient = packet.Sender;
+                    break;
+                }
+            }
+
+            if (player == null)
+            {
+                Log.WriteLine("Rejecting {0} (ticket {1}) for invalid user-ticket combination.", username, ticket);
+                packet.Sender.Error("Invalid ticket-user combination.");
+                return;
+            }
 
             var ack = new RicePacket(42); // CheckInLobbyAck
             ack.Writer.Write(0); // Result
