@@ -48,10 +48,12 @@ namespace Rice.Server.Core
             {
                 foreach (var method in type.GetMethods())
                 {
-                    foreach (var attrib in method.GetCustomAttributes<RicePacketAttribute>())
+                    foreach (var boxedAttrib in method.GetCustomAttributes(typeof(RicePacketAttribute), false))
                     {
+                        var attrib = boxedAttrib as RicePacketAttribute;
+
                         var id = attrib.ID;
-                        var parser = (Action<RicePacket>)method.CreateDelegate(typeof(Action<RicePacket>));
+                        var parser = (Action<RicePacket>)Delegate.CreateDelegate(typeof(Action<RicePacket>), method);
 
                         if (attrib.Handlers.HasFlag(ServerType.Auth))
                             Auth.SetParser(id, parser);
