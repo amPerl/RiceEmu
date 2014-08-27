@@ -25,7 +25,7 @@ namespace Rice.Server.Packets.Lobby
 
             foreach (var p in RiceServer.GetPlayers())
             {
-                if (p.Ticket == ticket && p.User.Username.ToLower() == username)
+                if (p.Ticket == ticket && p.User.Username == username)
                 {
                     player = p;
                     player.LobbyClient = packet.Sender;
