@@ -42,7 +42,7 @@ namespace Rice.Server.Structures
 
     public struct CharInfo : ISerializable
     {
-        public long Cid;
+        public ulong CID;
         public string Name; // 0x15
         public string LastMessageFrom; // 0xB
         public int LastDate;
@@ -66,7 +66,7 @@ namespace Rice.Server.Structures
         public int LastChannel;
         public int City;
         public int PosState;
-        public int CurCarId;
+        public int CurrentCarID;
         public uint QuickSlot1;
         public uint QuickSlot2;
         public int TeamJoinDate;
@@ -80,7 +80,7 @@ namespace Rice.Server.Structures
 
         public void Serialize(PacketWriter writer)
         {
-            writer.Write(Cid);
+            writer.Write(CID);
             writer.WriteUnicodeStatic(Name, 0x15);
             writer.WriteUnicodeStatic(LastMessageFrom, 0xB);
             writer.Write(LastDate);
@@ -110,7 +110,7 @@ namespace Rice.Server.Structures
             writer.Write(LastChannel);
             writer.Write(City);
             writer.Write(PosState);
-            writer.Write(CurCarId);
+            writer.Write(CurrentCarID);
             writer.Write(QuickSlot1);
             writer.Write(QuickSlot2);
             writer.Write(TeamJoinDate);

@@ -16,7 +16,7 @@ namespace Rice.Server.Packets.Game
             bool green = packet.Reader.ReadUInt32() == 0xFF00FF00; // need to ignore this and check for rank serverside
             string message = packet.Reader.ReadUnicodePrefixed();
 
-            string sender = packet.Sender.Player.ActiveCharacter;
+            string sender = packet.Sender.Player.ActiveCharacter.Name;
 
             Console.WriteLine("({0}) <{1}> {2}", type, sender, message);
 

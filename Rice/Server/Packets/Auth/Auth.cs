@@ -36,7 +36,7 @@ namespace Rice.Server.Packets.Auth
             }
             else if (user.Status == UserStatus.Banned)
             {
-                Log.WriteLine("Attempt to log into suspended account {0}.", user.Username);
+                Log.WriteLine("Attempt to log into suspended account {0}.", user.Name);
 
                 packet.Sender.Error("Your account has been suspended.");
                 packet.Sender.Kill();

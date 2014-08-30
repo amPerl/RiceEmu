@@ -14,32 +14,18 @@ namespace Rice.Server.Packets.Game
         {
             string characterName = packet.Reader.ReadUnicode();
 
-            packet.Sender.Player = new Rice.Game.Player(Rice.Game.User.Empty); // TODO: load user info on checkin
-            packet.Sender.Player.ActiveCharacter = characterName; // TODO: verify this
+            var character = Rice.Game.Character.Retrieve(characterName); // TODO: verify this
+            var user = Rice.Game.User.Retrieve(character.UID);
+
+            packet.Sender.Player = new Rice.Game.Player(user);
+            packet.Sender.Player.Characters = Rice.Game.Character.Retrieve(user.UID);
+            packet.Sender.Player.ActiveCharacter = character;
 
             var ack = new RicePacket(124);
 
             var ackStruct = new Structures.LoadCharAck
             {
-                CharInfo = new Structures.CharInfo
-                {
-                    Avatar = 1,
-                    Name = characterName,
-                    Cid = 1,
-                    City = 1,
-                    CurCarId = 1,
-                    ExpInfo = new Structures.ExpInfo
-                    {
-                        BaseExp = 0,
-                        CurExp = 0,
-                        NextExp = 0
-                    },
-                    HancoinGarage = 1,
-                    Level = 80,
-                    TeamId = 1,
-                    TeamName = "Staff",
-                    MitoMoney = 123456789
-                },
+                CharInfo = character.GetInfo(),
                 nCarSize = 1,
                 CarInfo = new List<Structures.CarInfo>()
                 {

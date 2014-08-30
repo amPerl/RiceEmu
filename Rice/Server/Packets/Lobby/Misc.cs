@@ -21,12 +21,8 @@ namespace Rice.Server.Packets.Lobby
             uint time = packet.Reader.ReadUInt32();
             string stringTicket = packet.Reader.ReadASCIIStatic(0x40);
 
-            Player player = null;
-            bool verifyTicket = true;
-
 #if DEBUG
-            verifyTicket = false;
-            player = new Player(Rice.Game.User.Retrieve(username));
+            packet.Sender.Player = new Player(Rice.Game.User.Retrieve("admin"));
 #else
 
             foreach (var p in RiceServer.GetPlayers())
@@ -40,7 +36,7 @@ namespace Rice.Server.Packets.Lobby
             }
 #endif
 
-            if (player == null)
+            if (packet.Sender.Player == null)
             {
                 Log.WriteLine("Rejecting {0} (ticket {1}) for invalid user-ticket combination.", username, ticket);
                 packet.Sender.Error("Invalid ticket-user combination.");

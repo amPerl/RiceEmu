@@ -19,7 +19,7 @@ namespace Rice.Game
     public class User
     {
         public ulong UID;
-        public string Username;
+        public string Name;
         public string PasswordHash;
         public UserStatus Status;
         public string CreateIP;
@@ -55,7 +55,7 @@ namespace Rice.Game
                 {
                     user = new User();
                     user.UID = Convert.ToUInt64(reader["UID"]);
-                    user.Username = reader["Username"] as string;
+                    user.Name = reader["Username"] as string;
                     user.PasswordHash = reader["PasswordHash"] as string;
                     user.Status = (UserStatus)Convert.ToByte(reader["Status"]);
                     user.CreateIP = reader["CreateIP"] as string;
@@ -81,7 +81,33 @@ namespace Rice.Game
                 {
                     user = new User();
                     user.UID = Convert.ToUInt64(reader["UID"]);
-                    user.Username = reader["Username"] as string;
+                    user.Name = reader["Username"] as string;
+                    user.PasswordHash = reader["PasswordHash"] as string;
+                    user.Status = (UserStatus)Convert.ToByte(reader["Status"]);
+                    user.CreateIP = reader["CreateIP"] as string;
+                }
+            }
+
+            return user;
+        }
+
+        public static User Retrieve(ulong uid)
+        {
+            DbConnection dbconn = Database.GetConnection();
+
+            DbCommand command = dbconn.CreateTextCommand("SELECT * FROM Users WHERE UID = @uid");
+
+            command.AddParameter("@uid", uid);
+
+            User user = null;
+
+            using (DbDataReader reader = command.ExecuteReader())
+            {
+                if (reader.Read())
+                {
+                    user = new User();
+                    user.UID = Convert.ToUInt64(reader["UID"]);
+                    user.Name = reader["Username"] as string;
                     user.PasswordHash = reader["PasswordHash"] as string;
                     user.Status = (UserStatus)Convert.ToByte(reader["Status"]);
                     user.CreateIP = reader["CreateIP"] as string;
