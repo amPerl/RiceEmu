@@ -18,9 +18,9 @@ namespace Rice.Game
         public long Mito;
         public int Avatar;
         public int Level;
-        public byte City;
-        public byte CurrentCarID;
-        public byte GarageLevel;
+        public int City;
+        public int CurrentCarID;
+        public int GarageLevel;
         public long TID;
 
         private Character()
@@ -69,11 +69,11 @@ namespace Rice.Game
                     character.UID = Convert.ToUInt64(reader["UID"]);
                     character.Name = reader["Name"] as string;
                     character.Mito = Convert.ToInt64(reader["Mito"]);
-                    character.Avatar = Convert.ToByte(reader["Avatar"]);
-                    character.Level = Convert.ToUInt16(reader["Level"]);
-                    character.City = Convert.ToByte(reader["City"]);
-                    character.CurrentCarID = Convert.ToByte(reader["CurrentCarID"]);
-                    character.GarageLevel = Convert.ToByte(reader["GarageLevel"]);
+                    character.Avatar = Convert.ToInt32(reader["Avatar"]);
+                    character.Level = Convert.ToInt32(reader["Level"]);
+                    character.City = Convert.ToInt32(reader["City"]);
+                    character.CurrentCarID = Convert.ToInt32(reader["CurrentCarID"]);
+                    character.GarageLevel = Convert.ToInt32(reader["GarageLevel"]);
                     character.TID = Convert.ToInt64(reader["TID"]);
                 }
             }
@@ -100,11 +100,11 @@ namespace Rice.Game
                     character.UID = Convert.ToUInt64(reader["UID"]);
                     character.Name = reader["Name"] as string;
                     character.Mito = Convert.ToInt64(reader["Mito"]);
-                    character.Avatar = Convert.ToByte(reader["Avatar"]);
-                    character.Level = Convert.ToUInt16(reader["Level"]);
-                    character.City = Convert.ToByte(reader["City"]);
-                    character.CurrentCarID = Convert.ToByte(reader["CurrentCarID"]);
-                    character.GarageLevel = Convert.ToByte(reader["GarageLevel"]);
+                    character.Avatar = Convert.ToInt32(reader["Avatar"]);
+                    character.Level = Convert.ToInt32(reader["Level"]);
+                    character.City = Convert.ToInt32(reader["City"]);
+                    character.CurrentCarID = Convert.ToInt32(reader["CurrentCarID"]);
+                    character.GarageLevel = Convert.ToInt32(reader["GarageLevel"]);
                     character.TID = Convert.ToInt64(reader["TID"]);
                     chars.Add(character);
                 }

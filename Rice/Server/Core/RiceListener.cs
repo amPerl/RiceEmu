@@ -31,7 +31,7 @@ namespace Rice.Server.Core
 
                     ushort id = ushort.Parse(lineSplit[0]);
 
-                    debugNameDatabase[id] = lineSplit[1].Trim();
+                    debugNameDatabase[id] = lineSplit[1].Trim().Split('_')[1];
                 }
             }
 #endif
@@ -79,7 +79,7 @@ namespace Rice.Server.Core
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
 #if DEBUG
                 if (debugNameDatabase.ContainsKey(packet.ID))
-                    Log.WriteLine("Received packet {2} (id {0}, {0:X}) on {1}.", packet.ID, port, debugNameDatabase[packet.ID]);
+                    Log.WriteLine("Received {2} (id {0}, {0:X}) on {1}.", packet.ID, port, debugNameDatabase[packet.ID]);
                 else
                     Log.WriteLine("Received unknown packet (id {0}, {0:X}) on {1}.", packet.ID, port);
 #else

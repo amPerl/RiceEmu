@@ -46,5 +46,11 @@ namespace Rice.Server.Packets.Game
 
             packet.Sender.Send(ack);
         }
+
+        [RicePacket(3917, RiceServer.ServerType.Game)]
+        public static void UnknownSync(RicePacket packet)
+        {
+            // hide sync packets for now
+        }
     }
 }
