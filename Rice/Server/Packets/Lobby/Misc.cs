@@ -22,16 +22,23 @@ namespace Rice.Server.Packets.Lobby
             string stringTicket = packet.Reader.ReadASCIIStatic(0x40);
 
             Player player = null;
+            bool verifyTicket = true;
+
+#if DEBUG
+            verifyTicket = false;
+            player = new Player(Rice.Game.User.Retrieve(username));
+#else
 
             foreach (var p in RiceServer.GetPlayers())
             {
-                if (p.Ticket == ticket && p.User.Username == username)
+                if (p.User.Username == username && p.Ticket == ticket)
                 {
                     player = p;
                     player.LobbyClient = packet.Sender;
                     break;
                 }
             }
+#endif
 
             if (player == null)
             {

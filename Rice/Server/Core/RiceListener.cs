@@ -66,5 +66,14 @@ namespace Rice.Server.Core
         {
             return clients.ToArray();
         }
+
+        public void Broadcast(RicePacket packet, RiceClient exclude = null)
+        {
+            foreach (var client in GetClients())
+            {
+                if (exclude == null || client != exclude)
+                    client.Send(packet);
+            }
+        }
     }
 }

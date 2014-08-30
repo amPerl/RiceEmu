@@ -13,6 +13,7 @@ namespace Rice.Game
 
         public User User;
         public List<Character> Characters;
+        public string ActiveCharacter;
 
         private RiceClient authClient, lobbyClient, areaClient, gameClient;
         public RiceClient AuthClient { get { return authClient; } set { authClient = value; authClient.Player = this; } }

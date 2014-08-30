@@ -82,7 +82,8 @@ namespace Rice.Server
             do
             {
                 val = ReadInt16();
-                sb.Append((char)val);
+                if (val > 0)
+                    sb.Append((char)val);
             }
             while (val > 0);
             return sb.ToString();

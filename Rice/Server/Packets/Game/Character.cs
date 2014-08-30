@@ -14,6 +14,9 @@ namespace Rice.Server.Packets.Game
         {
             string characterName = packet.Reader.ReadUnicode();
 
+            packet.Sender.Player = new Rice.Game.Player(Rice.Game.User.Empty); // TODO: load user info on checkin
+            packet.Sender.Player.ActiveCharacter = characterName; // TODO: verify this
+
             var ack = new RicePacket(124);
 
             var ackStruct = new Structures.LoadCharAck
@@ -21,7 +24,7 @@ namespace Rice.Server.Packets.Game
                 CharInfo = new Structures.CharInfo
                 {
                     Avatar = 1,
-                    Name = "charName",
+                    Name = characterName,
                     Cid = 1,
                     City = 1,
                     CurCarId = 1,

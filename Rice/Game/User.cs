@@ -28,6 +28,14 @@ namespace Rice.Game
         {
         }
 
+        public static User Empty
+        {
+            get
+            {
+                return new User() { Status = UserStatus.Normal };
+            }
+        }
+
         public static User Retrieve(string username, string passwordHash)
         {
             DbConnection dbconn = Database.GetConnection();
@@ -39,17 +47,45 @@ namespace Rice.Game
 
             Log.WriteLine("Username: {0}, PasswordHash: {1}", username, passwordHash);
 
-            DbDataReader reader = command.ExecuteReader();
             User user = null;
 
-            if (reader.Read())
+            using (DbDataReader reader = command.ExecuteReader())
             {
-                user = new User();
-                user.UID = Convert.ToUInt64(reader["UID"]);
-                user.Username = reader["Username"] as string;
-                user.PasswordHash = reader["PasswordHash"] as string;
-                user.Status = (UserStatus)Convert.ToByte(reader["Status"]);
-                user.CreateIP = reader["CreateIP"] as string;
+                if (reader.Read())
+                {
+                    user = new User();
+                    user.UID = Convert.ToUInt64(reader["UID"]);
+                    user.Username = reader["Username"] as string;
+                    user.PasswordHash = reader["PasswordHash"] as string;
+                    user.Status = (UserStatus)Convert.ToByte(reader["Status"]);
+                    user.CreateIP = reader["CreateIP"] as string;
+                }
+            }
+
+            return user;
+        }
+
+        public static User Retrieve(string username)
+        {
+            DbConnection dbconn = Database.GetConnection();
+
+            DbCommand command = dbconn.CreateTextCommand("SELECT * FROM Users WHERE Username = @user");
+
+            command.AddParameter("@user", username);
+
+            User user = null;
+
+            using (DbDataReader reader = command.ExecuteReader())
+            {
+                if (reader.Read())
+                {
+                    user = new User();
+                    user.UID = Convert.ToUInt64(reader["UID"]);
+                    user.Username = reader["Username"] as string;
+                    user.PasswordHash = reader["PasswordHash"] as string;
+                    user.Status = (UserStatus)Convert.ToByte(reader["Status"]);
+                    user.CreateIP = reader["CreateIP"] as string;
+                }
             }
 
             return user;

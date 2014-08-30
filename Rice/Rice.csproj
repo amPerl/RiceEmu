@@ -68,6 +68,7 @@
     <Compile Include="Server\PacketIO.cs" />
     <Compile Include="Server\Core\RicePacket.cs" />
     <Compile Include="Server\Packets\Game\Character.cs" />
+    <Compile Include="Server\Packets\Game\Chat.cs" />
     <Compile Include="Server\Packets\Game\Misc.cs" />
     <Compile Include="Server\Packets\Lobby\User.cs" />
     <Compile Include="Server\Packets\Lobby\Misc.cs" />
