@@ -13,7 +13,7 @@ namespace Rice.Server.Packets.Game
         public static void ChatMessage(RicePacket packet)
         {
             string type = packet.Reader.ReadUnicodeStatic(10);
-            bool green = packet.Reader.ReadUInt32() == 0xFF00FF00; // need to ignore this and check for rank serverside
+            bool green = packet.Reader.ReadUInt32() == 0xFF00FF00; // ignore this, use packet.Sender.Player.User.Status
             string message = packet.Reader.ReadUnicodePrefixed();
 
             string sender = packet.Sender.Player.ActiveCharacter.Name;

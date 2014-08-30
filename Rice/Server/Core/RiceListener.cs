@@ -7,6 +7,8 @@ namespace Rice.Server.Core
 {
     public class RiceListener
     {
+        private static Dictionary<ushort, string> debugNameDatabase;
+
         private Dictionary<ushort, Action<RicePacket>> parsers;
         private List<RiceClient> clients;
 
@@ -16,6 +18,24 @@ namespace Rice.Server.Core
 
         public RiceListener(int port, bool exchangeRequired = true)
         {
+#if DEBUG
+            if (debugNameDatabase == null)
+            {
+                debugNameDatabase = new Dictionary<ushort, string>();
+                string src = new WebClient().DownloadString("http://u.rtag.me/p/parsers.txt");
+
+                foreach (var line in src.Split('\n'))
+                {
+                    if (line.Length <= 3) continue;
+                    string[] lineSplit = line.Split(':');
+
+                    ushort id = ushort.Parse(lineSplit[0]);
+
+                    debugNameDatabase[id] = lineSplit[1].Trim();
+                }
+            }
+#endif
+
             parsers = new Dictionary<ushort, Action<RicePacket>>();
             clients = new List<RiceClient>();
             this.port = port;
@@ -57,7 +77,14 @@ namespace Rice.Server.Core
             else
             {
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
+#if DEBUG
+                if (debugNameDatabase.ContainsKey(packet.ID))
+                    Log.WriteLine("Received packet {2} (id {0}, {0:X}) on {1}.", packet.ID, port, debugNameDatabase[packet.ID]);
+                else
+                    Log.WriteLine("Received unknown packet (id {0}, {0:X}) on {1}.", packet.ID, port);
+#else
                 Log.WriteLine("Received unknown packet (id {0}, {0:X}) on {1}.", packet.ID, port);
+#endif
                 Console.ForegroundColor = ConsoleColor.Gray;
             }
         }
