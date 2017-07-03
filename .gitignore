@@ -161,3 +161,7 @@ $RECYCLE.BIN/
 #NuGet
 packages
 !packages/repositories.config
+
+
+#Rice
+Rice/res/*.json
