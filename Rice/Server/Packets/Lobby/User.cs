@@ -38,16 +38,15 @@ namespace Rice.Server.Packets.Lobby
                 ack.Writer.Write(character.CID); // ID
                 ack.Writer.Write(character.Avatar); // Avatar
                 ack.Writer.Write(character.Level); // Level
-                ack.Writer.Write(1);
-                ack.Writer.Write(0x50);
-                ack.Writer.Write(0);
-                ack.Writer.Write(int.MaxValue / 2); // Creation Date
+                ack.Writer.Write(1); // Car ID
+                ack.Writer.Write(0x50); // Car type
+                ack.Writer.Write(0); // Car color
+                ack.Writer.Write(DateTime.Now - TimeSpan.FromDays(365)); // Creation Date
                 ack.Writer.Write(character.TID); // Crew ID
                 ack.Writer.Write(0L); // Crew Image
-                ack.Writer.WriteUnicodeStatic("Staff", 12); // Crew Name
-                ack.Writer.Write((short)0);
-                ack.Writer.Write((short)-1);
-                ack.Writer.Write((short)0);
+                ack.Writer.WriteUnicodeStatic("", 13); // Crew Name
+                ack.Writer.Write((short)0); // Crew rank
+                ack.Writer.Write((short)0); // Guild (0 = OMD, 1 = ROO)
             }
 
             packet.Sender.Send(ack);
@@ -59,22 +58,36 @@ namespace Rice.Server.Packets.Lobby
         public static void CheckCharacterName(RicePacket packet)
         {
             string characterName = packet.Reader.ReadUnicode();
-            Log.WriteLine("VerifyCharName: {0}", characterName);
-
-            // TODO: Verify
 
             var ack = new RicePacket(81);
             ack.Writer.WriteUnicodeStatic(characterName, 21);
-            ack.Writer.Write(1); // Availability. 1 = Available, 0 = Unavailable.
+            ack.Writer.Write(Rice.Game.Character.IsNameUsable(characterName) ? 1 : 0); // Availability. 1 = Available, 0 = Unavailable.
             packet.Sender.Send(ack);
         }
 
         [RicePacket(82, RiceServer.ServerType.Lobby)]
         public static void CreateCharacter(RicePacket packet)
         {
-            string characterName = packet.Reader.ReadUnicode();
-            Log.WriteLine("CreateChar: {0}", characterName);
+            string characterName = packet.Reader.ReadUnicodeStatic(21);
+            ushort avatar = packet.Reader.ReadUInt16();
+            // We disregard the next 8 bytes (ulong CarType, ulong Color)
 
+            if(packet.Sender.Player.Characters.Count() < 3 && Rice.Game.Character.IsNameUsable(characterName))
+            {
+                if (Rice.Game.Character.Create(packet.Sender.Player.User.UID, characterName, avatar))
+                {
+                    Rice.Game.Character character = Rice.Game.Character.Retrieve(characterName);
+                    if (character != null)
+                    {
+                          packet.Sender.Player.Characters.Add(character);
+                          var ack = new RicePacket(83);
+                          ack.Writer.WriteUnicodeStatic(characterName, 21);
+                          ack.Writer.Write(character.CID); //High hopes there, NPLUTO
+                          ack.Writer.Write(character.CurrentCarID); //???
+                          packet.Sender.Send(ack);
+                    }
+                }
+            }
             // TODO: Verify, Handle
         }
 
@@ -82,13 +95,21 @@ namespace Rice.Server.Packets.Lobby
         public static void DeleteCharacter(RicePacket packet)
         {
             string characterName = packet.Reader.ReadUnicode();
-            Log.WriteLine("DeleteChar: {0}", characterName);
-
-            // TODO: Verify
-
-            var ack = new RicePacket(84);
-            ack.Writer.WriteUnicodeStatic(characterName, 21);
-            packet.Sender.Send(ack);
+            foreach(var character in packet.Sender.Player.Characters)
+            {
+                if (character.Name == characterName)
+                {
+                    if (Rice.Game.Character.Delete(characterName))
+                    {
+                        packet.Sender.Player.Characters.Remove(character);
+                        var ack = new RicePacket(84);
+                        ack.Writer.WriteUnicodeStatic(characterName, 21);
+                        packet.Sender.Send(ack);
+                        break;
+                    }
+                    break;
+                }
+            }
         }
     }
 }

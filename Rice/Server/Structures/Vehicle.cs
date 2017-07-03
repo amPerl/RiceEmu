@@ -30,7 +30,7 @@ namespace Rice.Server.Structures
 
     public struct CarUnit : ISerializable
     {
-        public uint CarID;
+        public int CarID;
         public uint CarType;
         public uint BaseColor;
         public uint Grade;

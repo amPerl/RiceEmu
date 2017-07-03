@@ -14,7 +14,7 @@ namespace Rice.Server
 
         public byte[] GetBuffer()
         {
-            return (this.BaseStream as MemoryStream).ToArray();
+            return (BaseStream as MemoryStream).ToArray();
         }
 
         public void WriteUnicode(string str, bool lengthPrefix = true)
@@ -30,14 +30,21 @@ namespace Rice.Server
             Write(buf);
         }
 
-        public void WriteUnicodeStatic(string str, int maxLength)
+        public void WriteUnicodeStatic(string str, int maxLength, bool nullTerminated = false)
         {
             if (str == null)
                 str = "";
 
             if (str.Length > maxLength) 
                 str = str.Substring(0, maxLength);
-            
+
+            if (nullTerminated)
+            {
+                if (str.Length > maxLength - 1)
+                    str = str.Substring(0, maxLength - 1);
+                str += '\0';
+            }
+
             byte[] stringBuf = Encoding.Unicode.GetBytes(str);
 
             byte[] buf = new byte[maxLength * 2];
@@ -65,6 +72,11 @@ namespace Rice.Server
         public void Write(ISerializable structure)
         {
             structure.Serialize(this);
+        }
+
+        public void Write(DateTime date)
+        {
+            Write(Convert.ToUInt32((date - new DateTime(1970, 1,1)).TotalSeconds));
         }
     }
 
@@ -128,6 +140,20 @@ namespace Rice.Server
                 str = str.Substring(0, str.IndexOf('\0'));
 
             return str;
+        }
+        
+        public DateTime ReadDate()
+        {
+            return new DateTime(1970, 1, 1).AddSeconds(ReadUInt32());
+        }
+
+        public Vector4 ReadVector4()
+        {
+            float x = ReadSingle();
+            float y = ReadSingle();
+            float z = ReadSingle();
+            float rotation = ReadSingle();
+            return new Vector4(x, y, z, rotation);
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Rice.Game;
 using Rice.Server.Core;
 
 namespace Rice.Server.Packets.Game
@@ -17,6 +18,28 @@ namespace Rice.Server.Packets.Game
             string message = packet.Reader.ReadUnicodePrefixed();
 
             string sender = packet.Sender.Player.ActiveCharacter.Name;
+
+#if DEBUG
+            if (message.ToLower().StartsWith("gibe_plos "))
+            {
+                string[] split = message.Split(' ');
+                if (split.Length == 2)
+                {
+                    Item item;
+                    if (packet.Sender.Player.ActiveCharacter.GrantItem(split[1], 1, out item))
+                    {
+                        packet.Sender.Error($"Gave 1x {item.itemEntry.Name}");
+                        Log.WriteLine($"Gave {sender} 1x {item.itemEntry.Name}");
+
+                        packet.Sender.Player.ActiveCharacter.FlushModInfo(packet.Sender);
+                        return;
+                    }
+
+                    packet.Sender.Error($"Failed to give item");
+                    return;
+                }
+            }
+#endif
 
             Console.WriteLine("({0}) <{1}> {2}", type, sender, message);
 

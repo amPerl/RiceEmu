@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Rice.Server.Core;
 
 namespace Rice.Server.Structures
 {
@@ -38,6 +39,86 @@ namespace Rice.Server.Structures
             writer.Write(NextExp);
             writer.Write(BaseExp);
         }
+
+        public static ExpInfo FromLevelExp(int level, long exp)
+        {
+            return new ExpInfo
+            {
+                BaseExp = RiceServer.ExpTable[level - 1],
+                NextExp = RiceServer.ExpSumTable[level],
+                CurExp = exp
+            };
+        }
+    }
+
+    public struct ItemInfo : ISerializable
+    {
+        public uint CurCarID;
+        public ushort State;
+        public ushort Slot;
+        public uint StackNum; // it's an int in npluto's implementation for some reason
+        public uint LastCarID;
+        public uint AssistA;
+        public uint AssistB;
+        public uint AssistC;
+        public uint AssistD;
+        public uint AssistE;
+        public uint AssistF;
+        public uint AssistG;
+        public uint AssistH;
+        public uint AssistI;
+        public uint AssistJ;
+        public uint Box;
+        public uint Belonging;
+        public int Upgrade;
+        public int UpgradePoint;
+        public uint ExpireTick;
+        public float ItemHealth;
+        public uint unk1;
+        public uint TableIdx;
+        public uint InvenIdx;
+        public int Random;
+
+        public void Serialize(PacketWriter writer)
+        {
+            writer.Write(CurCarID);
+            writer.Write(State);
+            writer.Write(Slot);
+            writer.Write(StackNum);
+            writer.Write(LastCarID);
+            writer.Write(AssistA);
+            writer.Write(AssistB);
+            writer.Write(AssistC);
+            writer.Write(AssistD);
+            writer.Write(AssistE);
+            writer.Write(AssistF);
+            writer.Write(AssistG);
+            writer.Write(AssistH);
+            writer.Write(AssistI);
+            writer.Write(AssistJ);
+            writer.Write(Box);
+            writer.Write(Belonging);
+            writer.Write(Upgrade);
+            writer.Write(UpgradePoint);
+            writer.Write(ExpireTick);
+            writer.Write(ItemHealth);
+            writer.Write(0); // unk1, 0 in all known cases
+            writer.Write(TableIdx);
+            writer.Write(InvenIdx);
+            writer.Write(Random);
+        }
+    }
+
+    public struct ItemModInfo : ISerializable
+    {
+        public ItemInfo Item;
+        public int State;
+
+        public void Serialize(PacketWriter writer)
+        {
+            Item.Serialize(writer);
+            writer.Write(State);
+        }
     }
 
     public struct CharInfo : ISerializable
@@ -52,7 +133,7 @@ namespace Rice.Server.Structures
         public long MitoMoney;
         public long TeamId;
         public long TeamMarkId;
-        public string TeamName;		 // 0xD
+        public string TeamName; // 0xD
         public int TeamRank;
         public byte PType;
         public uint PvpCnt;
@@ -62,27 +143,29 @@ namespace Rice.Server.Structures
         public uint TPvpWinCnt;
         public uint TPvpPoint;
         public uint QuickCnt;
-        public float TotalDistance, PositionX, PositionY, PositionZ, Rotation;
+        public float TotalDistance;
+        public Vector4 Position;
         public int LastChannel;
         public int City;
         public int PosState;
         public int CurrentCarID;
         public uint QuickSlot1;
         public uint QuickSlot2;
-        public int TeamJoinDate;
-        public int TeamCloseDate;
-        public int TeamLeaveDate;
+        public DateTime TeamJoinDate;
+        public DateTime TeamCloseDate;
+        public DateTime TeamLeaveDate;
         public int HancoinInven;
         public int HancoinGarage;
         public int Flags;
         public int Guild;
         public long Mileage;
+        public uint GPTeam;
 
         public void Serialize(PacketWriter writer)
         {
             writer.Write(CID);
-            writer.WriteUnicodeStatic(Name, 0x15);
-            writer.WriteUnicodeStatic(LastMessageFrom, 0xB);
+            writer.WriteUnicodeStatic(Name, 21);
+            writer.WriteUnicodeStatic(LastMessageFrom, 11);
             writer.Write(LastDate);
             writer.Write(Avatar);
             writer.Write(Level);
@@ -90,7 +173,7 @@ namespace Rice.Server.Structures
             writer.Write(MitoMoney);
             writer.Write(TeamId);
             writer.Write(TeamMarkId);
-            writer.WriteUnicodeStatic(TeamName, 0xD);
+            writer.WriteUnicodeStatic(TeamName, 13);
             writer.Write(TeamRank);
             writer.Write(PType);
             writer.Write(PvpCnt);
@@ -103,10 +186,7 @@ namespace Rice.Server.Structures
             writer.Write(0); // unknown
             writer.Write(0); // unknown
             writer.Write(TotalDistance);
-            writer.Write(PositionX);
-            writer.Write(PositionY);
-            writer.Write(PositionZ);
-            writer.Write(Rotation);
+            writer.Write(Position);
             writer.Write(LastChannel);
             writer.Write(City);
             writer.Write(PosState);
@@ -119,10 +199,10 @@ namespace Rice.Server.Structures
             writer.Write(new byte[12]); // filler
             writer.Write(HancoinInven);
             writer.Write(HancoinGarage);
-            writer.Write(new byte[42]); // filler
             writer.Write(Flags);
             writer.Write(Guild);
-            //writer.Write(Mileage);
+            writer.Write(new byte[38]); // filler
+            writer.Write(GPTeam); // DCGP team
         }
     }
 
@@ -157,12 +237,11 @@ namespace Rice.Server.Structures
                 writer.Write(Reserve[i]);
             writer.WriteUnicodeStatic(PlateString, 9);
         }
-
     }
 
     public struct PlayerInfo : ISerializable
     {
-        public string Cname; // 0xD
+        public string Name; // 0xD
         public ushort Serial;
         public ushort Age;
         public long Cid;
@@ -177,7 +256,7 @@ namespace Rice.Server.Structures
 
         public void Serialize(PacketWriter writer)
         {
-            writer.WriteUnicodeStatic(Cname, 0xD);
+            writer.WriteUnicodeStatic(Name, 0xD, true);
             writer.Write(Serial);
             writer.Write(Age);
             writer.Write(new byte[186]); // filler

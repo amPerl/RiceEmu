@@ -16,9 +16,10 @@ namespace Rice.Server.Packets.Area
         public static void TimeSync(RicePacket packet)
         {
             var ack = new RicePacket(0x21C);
-            ack.Writer.Write(packet.Reader.ReadUInt32());
-            ack.Writer.Write(0);
+            ack.Writer.Write(packet.Reader.ReadSingle()); // Local time
+            ack.Writer.Write(Environment.TickCount);
             packet.Sender.Send(ack);
         }
+
     }
 }

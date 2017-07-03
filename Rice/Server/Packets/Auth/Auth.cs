@@ -23,7 +23,7 @@ namespace Rice.Server.Packets.Auth
 
             if (user == null || user.Status == UserStatus.Invalid)
             {
-                Log.WriteLine("Attempt to log into non-existant account or use invalid password.");
+                Log.WriteLine("Attempt to log into non-existent account or use invalid password.");
 
                 var invalid = new RicePacket(22);
 
@@ -45,12 +45,14 @@ namespace Rice.Server.Packets.Auth
 
             Player player = new Player(user);
             player.AuthClient = packet.Sender;
-            player.Ticket = RiceServer.CreateTicket();
+
+            var ticket = RiceServer.CreateTicket(packet.Sender);
+
             RiceServer.AddPlayer(player);
 
             var ack = new RicePacket(22);
 
-            ack.Writer.Write(player.Ticket); // Ticket
+            ack.Writer.Write(ticket); // Ticket
             ack.Writer.Write(0); // Auth Result
 
             ack.Writer.Write(Environment.TickCount); // Time
@@ -83,7 +85,7 @@ namespace Rice.Server.Packets.Auth
             ack.Writer.Write(RiceServer.Config.GamePort); // GameServer Port
             ack.Writer.Write(RiceServer.Config.LobbyPort); // LobbyServer Port
             ack.Writer.Write(RiceServer.Config.AreaPort); // AreaServer 1 Port
-            ack.Writer.Write((ushort)11041); // AreaServer 2 Port
+            ack.Writer.Write((ushort)11031); // AreaServer 2 Port
             ack.Writer.Write((ushort)10701); // AreaServer 1 UDP Port
             ack.Writer.Write((ushort)10702); // AreaServer 2 UDP Port
             ack.Writer.Write(RiceServer.Config.RankingPort); // Ranking Port

@@ -12,9 +12,10 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>ee826c53</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -33,15 +34,28 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MySql.Data, Version=6.8.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MySql.Data.6.8.3\lib\net40\MySql.Data.dll</HintPath>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.0.0\lib\net40\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.0.0\lib\net40\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MySql.Data, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.9.8\lib\net40\MySql.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MySql.Data.Entity.EF6, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.Entity.6.9.8\lib\net40\MySql.Data.Entity.EF6.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics">
       <Private>True</Private>
@@ -53,9 +67,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Admin.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Database.cs" />
+    <Compile Include="Game\Area.cs" />
     <Compile Include="Game\Character.cs" />
+    <Compile Include="Game\Vehicle.cs" />
+    <Compile Include="Game\Item.cs" />
+    <Compile Include="Game\Quest.cs" />
     <Compile Include="Game\User.cs" />
     <Compile Include="Game\Player.cs" />
     <Compile Include="Log.cs" />
@@ -63,27 +82,71 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\Core\RiceListener.cs" />
     <Compile Include="Server\Core\RiceClient.cs" />
+    <Compile Include="Server\Core\RiceToken.cs" />
+    <Compile Include="Server\Database\Models\QuestState.cs" />
+    <Compile Include="Server\Database\Models\Character.cs" />
+    <Compile Include="Server\Database\Models\Item.cs" />
+    <Compile Include="Server\Database\Models\Vehicle.cs" />
+    <Compile Include="Server\Database\Models\User.cs" />
+    <Compile Include="Server\Packets\Area\Chat.cs" />
     <Compile Include="Server\Packets\Area\Misc.cs" />
+    <Compile Include="Server\Packets\Area\Area.cs" />
     <Compile Include="Server\Packets\Auth\Auth.cs" />
     <Compile Include="Server\PacketIO.cs" />
     <Compile Include="Server\Core\RicePacket.cs" />
+    <Compile Include="Server\Packets\Game\Area.cs" />
     <Compile Include="Server\Packets\Game\Character.cs" />
     <Compile Include="Server\Packets\Game\Chat.cs" />
+    <Compile Include="Server\Packets\Game\Inventory.cs" />
     <Compile Include="Server\Packets\Game\Misc.cs" />
+    <Compile Include="Server\Packets\Game\Dealership.cs" />
+    <Compile Include="Server\Packets\Game\VisualShop.cs" />
+    <Compile Include="Server\Packets\Game\PartShop.cs" />
+    <Compile Include="Server\Packets\Game\Party.cs" />
+    <Compile Include="Server\Packets\Game\Quest.cs" />
     <Compile Include="Server\Packets\Lobby\User.cs" />
     <Compile Include="Server\Packets\Lobby\Misc.cs" />
     <Compile Include="Server\Packets\Static.cs" />
+    <Compile Include="Server\Resources.cs" />
     <Compile Include="Server\RiceServer.cs" />
     <Compile Include="Server\Structures\Character.cs" />
     <Compile Include="Server\Structures\Misc.cs" />
+    <Compile Include="Server\Structures\Resources\AssistTable.cs" />
+    <Compile Include="Server\Structures\Resources\VehicleTable.cs" />
+    <Compile Include="Server\Structures\Resources\ItemTable.cs" />
+    <Compile Include="Server\Structures\Resources\QuestTable.cs" />
     <Compile Include="Server\Structures\Vehicle.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
+    <None Include="res\AssistClient.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="res\ItemClient.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="res\QuestClient.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="res\UseItemClient.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="res\VehicleList.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="res\VehicleUpgrade.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Packets.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

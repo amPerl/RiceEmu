@@ -44,5 +44,7 @@ namespace Rice.Server.Core
 
         public RiceServer.ServerType Handlers { get { return handlers; } }
         public ushort ID { get { return id; } }
+
+        public bool CheckedIn { get; set; }
     }
 }

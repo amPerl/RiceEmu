@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 
@@ -10,34 +11,39 @@ namespace Rice.Server.Core
         private static Dictionary<ushort, string> debugNameDatabase;
 
         private Dictionary<ushort, Action<RicePacket>> parsers;
+        private List<ushort> checkInParsers; 
         private List<RiceClient> clients;
 
         private int port;
         private TcpListener listener;
         private bool exchangeRequired;
 
-        public RiceListener(int port, bool exchangeRequired = true)
+        public string Name;
+
+        public RiceListener(string name, int port, bool exchangeRequired = true)
         {
 #if DEBUG
             if (debugNameDatabase == null)
             {
                 debugNameDatabase = new Dictionary<ushort, string>();
-                string src = new WebClient().DownloadString("http://u.rtag.me/p/parsers.txt");
 
-                foreach (var line in src.Split('\n'))
+                string[] src = File.ReadAllLines("Packets.txt");
+                foreach (var line in src)
                 {
                     if (line.Length <= 3) continue;
                     string[] lineSplit = line.Split(':');
 
                     ushort id = ushort.Parse(lineSplit[0]);
 
-                    debugNameDatabase[id] = lineSplit[1].Trim().Split('_')[1];
+                    debugNameDatabase[id] = lineSplit[1].Trim();
                 }
             }
 #endif
-
+            Name = name;
             parsers = new Dictionary<ushort, Action<RicePacket>>();
+            checkInParsers = new List<ushort>();
             clients = new List<RiceClient>();
+
             this.port = port;
             this.listener = new TcpListener(IPAddress.Any, port);
             this.exchangeRequired = exchangeRequired;
@@ -62,10 +68,12 @@ namespace Rice.Server.Core
             listener.BeginAcceptTcpClient(onAccept, this.listener);
         }
 
-        public void SetParser(ushort id, Action<RicePacket> parser)
+        public void SetParser(ushort id, Action<RicePacket> parser, bool needsCheckIn)
         {
             //Log.WriteLine("Added parser for packet {0} on {1}.", id, port);
             parsers[id] = parser;
+            if (needsCheckIn)
+                checkInParsers.Add(id);
         }
 
         public void Parse(RicePacket packet)
@@ -73,7 +81,16 @@ namespace Rice.Server.Core
             //Log.WriteLine("{0} parsing {1}.", port, packet.ID);
 
             if (parsers.ContainsKey(packet.ID))
+            {
+                if (checkInParsers.Contains(packet.ID) && packet.Sender.Player == null)
+                {
+                    Log.WriteLine("Autokilling {0} sender on {1}: CheckIn requirement not met.");
+                    packet.Sender.Kill("Forbidden");
+                    return;
+                }
+
                 parsers[packet.ID](packet);
+            }
             else
             {
                 Console.ForegroundColor = ConsoleColor.DarkYellow;

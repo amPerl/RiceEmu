@@ -21,31 +21,29 @@ namespace Rice.Server.Packets.Lobby
             uint time = packet.Reader.ReadUInt32();
             string stringTicket = packet.Reader.ReadASCIIStatic(0x40);
 
+            var serverTicket = RiceServer.GetTicket(ticket);
+
+            if (serverTicket == null || !serverTicket.ValidateOrigin(packet.Sender, username))
+            {
 #if DEBUG
-            packet.Sender.Player = new Player(Rice.Game.User.Retrieve("admin"));
+                packet.Sender.Player = new Player(Rice.Game.User.Retrieve(username));
+                RiceServer.AddPlayer(packet.Sender.Player);
+                serverTicket = RiceServer.CreateDebugTicket(packet.Sender, ticket);
 #else
-
-            foreach (var p in RiceServer.GetPlayers())
-            {
-                if (p.User.Username == username && p.Ticket == ticket)
-                {
-                    player = p;
-                    player.LobbyClient = packet.Sender;
-                    break;
-                }
-            }
-#endif
-
-            if (packet.Sender.Player == null)
-            {
-                Log.WriteLine("Rejecting {0} (ticket {1}) for invalid user-ticket combination.", username, ticket);
-                packet.Sender.Error("Invalid ticket-user combination.");
+                Log.WriteLine("Ticket is non-existent or invalid for current user.");
+                packet.Sender.Error("water u even doin");
                 return;
+#endif
             }
+            else
+            {
+                packet.Sender.Player = serverTicket.GetOwner();
+            }
+
 
             var ack = new RicePacket(42); // CheckInLobbyAck
-            ack.Writer.Write(0); // Result
-            ack.Writer.Write(0); // Permission
+            ack.Writer.Write(ticket); // Ticket
+            ack.Writer.Write(0); // Permission ???
             packet.Sender.Send(ack);
 
             var timeAck = new RicePacket(47); // LobbyTimeAck

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using Rice.Game;
 
@@ -10,7 +11,6 @@ namespace Rice.Server.Core
         private TcpClient tcp;
         private NetworkStream ns;
         private RiceListener parent;
-        private bool exchangeRequired;
 
         private byte[] buffer;
         private int bytesToRead;
@@ -23,7 +23,6 @@ namespace Rice.Server.Core
         {
             this.tcp = tcp;
             this.parent = parent;
-            this.exchangeRequired = exchangeRequired;
 
             ns = tcp.GetStream();
             Alive = true;
@@ -138,7 +137,18 @@ namespace Rice.Server.Core
                 return;
             }
 
-            Kill(ex.Message + ": " + ex.StackTrace);
+            string msg = ex.Message + ": " + ex.StackTrace;
+            if (ex.InnerException != null)
+            {
+                // turns out most exceptions are dumb wrappers :)
+                msg += $"\n\nInnerException:\n{ex.InnerException.Message}: {ex.InnerException.StackTrace}";
+
+                // something something deeper
+                if (ex.InnerException.InnerException != null)
+                    msg += $"\n\nSecond InnerException:\n{ex.InnerException.InnerException.Message}: {ex.InnerException.InnerException.StackTrace}";
+            }
+
+            Kill(msg);
         }
 
         public void Kill(string reason = "")
@@ -146,8 +156,16 @@ namespace Rice.Server.Core
             if (!Alive) return;
             Alive = false;
 
+            Player?.ActiveCharacter?.Area?.RemovePlayer(Player);
+
             Log.WriteLine("Killing off client. {0}", reason);
             tcp.Close();
+        }
+
+        public string GetRemoteIP()
+        {
+            var hostStr = tcp.Client.RemoteEndPoint.ToString();
+            return hostStr.Substring(0, hostStr.IndexOf(':'));
         }
     }
 }

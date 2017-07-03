@@ -9,8 +9,6 @@ namespace Rice.Game
 {
     public class Player
     {
-        public uint Ticket;
-
         public User User;
         public List<Character> Characters;
         public Character ActiveCharacter;
