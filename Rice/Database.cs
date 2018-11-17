@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.Entity;
-using MySql.Data.Entity;
-using MySql.Data.MySqlClient;
+using System.Data.SqlServerCe;
 using Rice.Server.Database.Models;
 
 namespace Rice
@@ -27,8 +26,7 @@ namespace Rice
             command.Parameters.Add(param);
         }
     }
-
-    [DbConfigurationType(typeof(MySqlEFConfiguration))]
+    
     public class RiceContext : DbContext
     {
         public virtual DbSet<User> Users { get; set; }
@@ -46,14 +44,7 @@ namespace Rice
 
         public static void Initialize(Config config)
         {
-            conn = new MySqlConnection(String.Format(
-                "Persist Security Info=True; Server={0}; Port={1}; Database={2}; Uid={3}; Pwd={4};",
-                config.DatabaseHost,
-                config.DatabasePort,
-                config.DatabaseName,
-                config.DatabaseUser,
-                config.DatabasePassword
-            ));
+            conn = new SqlCeConnection("Data Source=db.sdf");
         }
 
         public static void Start()
@@ -67,8 +58,7 @@ namespace Rice
                     if (rc.Database.CreateIfNotExists())
                     {
                         Log.WriteLine("Database did not exist, created.");
-
-#if DEBUG
+                        
                         // Create some test data to work with
                         var testUser = new User
                         {
@@ -108,13 +98,12 @@ namespace Rice
 
                         rc.Users.Add(testUser);
                         rc.SaveChanges();
-#endif
                     }
                 }
                 conn.Open();
                 Log.WriteLine("Connected to database.");
             }
-            catch (MySqlException ex)
+            catch (SqlCeException ex)
             {
                 Log.WriteError($"Connection failed: {ex.Message}");
             }

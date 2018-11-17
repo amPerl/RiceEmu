@@ -21,12 +21,6 @@ namespace Rice
         public ushort AreaPort = 11031;
         public ushort RankingPort = 11078;
 
-        public string DatabaseHost = "localhost";
-        public int DatabasePort = 3306;
-        public string DatabaseName = "RiceDB";
-        public string DatabaseUser = "Rice";
-        public string DatabasePassword = "ChangeMe";
-
         public static Config Load(string path = "config.json")
         {
             Config config;
@@ -40,10 +34,8 @@ namespace Rice
             }
             else
             {
-                Log.WriteLine("Config file could not be found, creating.");
-
+                Log.WriteLine("Config file could not be found, using defaults.");
                 config = new Config();
-                config.Save();
             }
 
             return config;
