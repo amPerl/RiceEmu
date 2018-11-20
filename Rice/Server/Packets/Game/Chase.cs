@@ -7,12 +7,14 @@ using System.Text;
 
 namespace Rice.Server.Packets.Game
 {
-
-    //180: ChaseBegin
-    //183: ChaseEnd
-    //185: ChaseProgress
-    //187: ChaseHit
-    //189: ChaseRequest
+    /*
+     * Disclaimer:
+     * This entire Chase implementation is unfinished, and only meant to pass the missions.
+     * The chases need the Traffic Agent to control them, so all of these are at a standstill for now.
+     * It needs a Chase game-object state implementation to store with players.
+     * In addition to that, it's also lacking party implementation, sticking strictly to single-player.
+     * Rewards also need to be generated and verified. ChaseRequest should be implemented once these are in place.
+     */
 
     public static class Chase
     {
@@ -144,18 +146,21 @@ namespace Rice.Server.Packets.Game
             var pos = Vector4.Deserialize(packet.Reader);
             var vel = Vector4.Deserialize(packet.Reader);
             int time = packet.Reader.ReadInt32();
-            Log.WriteLine(
-                $"ChaseEnd:" +
-                $"\n\tBuffer: {BitConverter.ToString(packet.Buffer)}" +
-                $"\n\tSerial: {serial}" +
-                $"\n\tCarSort: {carSort}" +
-                $"\n\tType: {type}" +
-                $"\n\tLife: {life}" +
-                $"\n\tResult: {result}" +
-                $"\n\tPosition: {pos}" +
-                $"\n\tVelocity: {vel}" +
-                $"\n\tTime: {time}"
-            );
+
+            // ^ this is fucked, but it's aligned enough to work for now
+
+            //Log.WriteLine(
+            //    $"ChaseEnd:" +
+            //    $"\n\tBuffer: {BitConverter.ToString(packet.Buffer)}" +
+            //    $"\n\tSerial: {serial}" +
+            //    $"\n\tCarSort: {carSort}" +
+            //    $"\n\tType: {type}" +
+            //    $"\n\tLife: {life}" +
+            //    $"\n\tResult: {result}" +
+            //    $"\n\tPosition: {pos}" +
+            //    $"\n\tVelocity: {vel}" +
+            //    $"\n\tTime: {time}"
+            //);
             
             var ack = new RicePacket(184); // ChaseResult
             ack.Writer.Write(result);
