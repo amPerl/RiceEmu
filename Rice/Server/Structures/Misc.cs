@@ -30,5 +30,19 @@ namespace Rice.Server.Structures
             bw.Write(Z);
             bw.Write(Rotation);
         }
+
+        public static Vector4 Deserialize(PacketReader br)
+        {
+            float x = br.ReadSingle();
+            float y = br.ReadSingle();
+            float z = br.ReadSingle();
+            float rot = br.ReadSingle();
+            return new Vector4(x, y, z, rot);
+        }
+
+        public override string ToString()
+        {
+            return $"Vec4({X}, {Y}, {Z}, {Rotation})";
+        }
     }
 }

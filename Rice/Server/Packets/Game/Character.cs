@@ -46,7 +46,7 @@ namespace Rice.Server.Packets.Game
             for (int i = 0; i < 16; ++i)
                 stat.Writer.Write(0);
             stat.Writer.Write(1000);
-            stat.Writer.Write(9001);
+            stat.Writer.Write(1000); // dura
             stat.Writer.Write(9002);
             stat.Writer.Write(9003);
             stat.Writer.Write(new byte[76]);

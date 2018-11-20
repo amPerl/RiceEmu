@@ -8,7 +8,9 @@ namespace Rice.Server.Core
 {
     public class RiceListener
     {
+#if DEBUG
         private static Dictionary<ushort, string> debugNameDatabase;
+#endif
 
         private Dictionary<ushort, Action<RicePacket>> parsers;
         private List<ushort> checkInParsers; 

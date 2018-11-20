@@ -47,6 +47,9 @@ namespace Rice.Server.Structures.Resources
         [JsonProperty("objective4")] public string Objective4;
         [JsonProperty("objective5")] public string Objective5;
 
+        [JsonProperty("huvlevel")] public int HuvLevel;
+        [JsonProperty("huvid")] public int HuvID;
+
         [JsonProperty("exp")] public int Experience;
         [JsonProperty("mito")] public int Mito;
 
