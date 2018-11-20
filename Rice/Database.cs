@@ -67,8 +67,7 @@ namespace Rice
                     if (rc.Database.CreateIfNotExists())
                     {
                         Log.WriteLine("Database did not exist, created.");
-
-#if DEBUG
+                        
                         // Create some test data to work with
                         var testUser = new User
                         {
@@ -108,7 +107,6 @@ namespace Rice
 
                         rc.Users.Add(testUser);
                         rc.SaveChanges();
-#endif
                     }
                 }
                 conn.Open();

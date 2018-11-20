@@ -46,6 +46,13 @@ namespace Rice.Server.Packets.Area
             packet.Sender.Send(ack);
         }
 
+        [RicePacket(564, RiceServer.ServerType.Area, CheckedIn = true)]
+        public static void ExitArea(RicePacket packet)
+        {
+            var area = packet.Reader.ReadInt32();
+            RiceServer.GetArea(area).RemovePlayer(packet.Sender.Player);
+        }
+
         [RicePacket(0x21D, RiceServer.ServerType.Area, CheckedIn = true)]
         public static void MoveVehicle(RicePacket packet)
         {
