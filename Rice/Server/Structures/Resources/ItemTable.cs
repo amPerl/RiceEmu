@@ -114,7 +114,7 @@ namespace Rice.Server.Structures.Resources
 
         [JsonProperty("minlevel")] public string MinLevel;
 
-        [JsonProperty("basepoints")] public string BasePoints;
+        [JsonProperty("basepoints")] public double BasePoints;
 
         [JsonProperty("basepointmodifier")] public string BasePointModifier;
 

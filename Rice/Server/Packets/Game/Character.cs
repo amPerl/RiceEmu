@@ -42,16 +42,9 @@ namespace Rice.Server.Packets.Game
             packet.Sender.Send(ack);
             Log.WriteLine("Sent LoadCharAck");
 
-            var stat = new RicePacket(760); // StatUpdate
-            for (int i = 0; i < 16; ++i)
-                stat.Writer.Write(0);
-            stat.Writer.Write(1000);
-            stat.Writer.Write(1000); // dura
-            stat.Writer.Write(9002);
-            stat.Writer.Write(9003);
-            stat.Writer.Write(new byte[76]);
+            var stat = new RicePacket(760);
+            stat.Writer.Write(character.GetStatUpdate());
             packet.Sender.Send(stat);
-
         }
 
         [RicePacket(1200, RiceServer.ServerType.Game)]
@@ -89,13 +82,13 @@ namespace Rice.Server.Packets.Game
  
             foreach(var p in RiceServer.GetPlayers())
             {
-                if(p.ActiveCharacter != null && p.ActiveCharacter.CarSerial == serial)
+                if(p.ActiveCharacter != null && p.ActiveCharacter.Serial == serial)
                 {
                     var character = p.ActiveCharacter;
                     var playerInfo = new Structures.PlayerInfo()
                     {
                         Name = character.Name,
-                        Serial = character.CarSerial,
+                        Serial = character.Serial,
                         Age = 0
                     };
                     var res = new RicePacket(802);

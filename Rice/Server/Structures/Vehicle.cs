@@ -51,4 +51,62 @@ namespace Rice.Server.Structures
             writer.Write(Kmh);
         }
     }
+
+    public struct StatUpdate : ISerializable
+    {
+        public int BaseSpeed;
+        public int BaseDurability;
+        public int BaseAcceleration;
+        public int BaseBoost;
+
+        public int EquipSpeed;
+        public int EquipDurability;
+        public int EquipAcceleration;
+        public int EquipBoost;
+
+        public int CharSpeed;
+        public int CharDurability;
+        public int CharAcceleration;
+        public int CharBoost;
+
+        public int ItemUseSpeed;
+        public int ItemUseDurability;
+        public int ItemUseAcceleration;
+        public int ItemUseBoost;
+
+        public void Serialize(PacketWriter writer)
+        {
+            writer.Write(BaseSpeed);
+            writer.Write(BaseDurability);
+            writer.Write(BaseAcceleration);
+            writer.Write(BaseBoost);
+
+            writer.Write(EquipSpeed);
+            writer.Write(EquipDurability);
+            writer.Write(EquipAcceleration);
+            writer.Write(EquipBoost);
+
+            writer.Write(CharSpeed);
+            writer.Write(CharDurability);
+            writer.Write(CharAcceleration);
+            writer.Write(CharBoost);
+
+            writer.Write(ItemUseSpeed);
+            writer.Write(ItemUseDurability);
+            writer.Write(ItemUseAcceleration);
+            writer.Write(ItemUseBoost);
+
+            int totalSpeed = BaseSpeed + EquipSpeed + CharSpeed + ItemUseSpeed;
+            int totalDurability = BaseDurability + EquipDurability + CharDurability + ItemUseDurability;
+            int totalAcceleration = BaseAcceleration + EquipAcceleration + CharAcceleration + ItemUseAcceleration;
+            int totalBoost = BaseBoost + EquipBoost + CharBoost + ItemUseBoost;
+
+            writer.Write(totalSpeed);
+            writer.Write(totalDurability);
+            writer.Write(totalAcceleration);
+            writer.Write(totalBoost);
+
+            writer.Write(new byte[76]);
+        }
+    }
 }

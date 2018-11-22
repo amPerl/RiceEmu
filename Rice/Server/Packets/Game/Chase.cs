@@ -42,7 +42,7 @@ namespace Rice.Server.Packets.Game
             //    $"\n\tFirst HUV Lv{firstHuvLevel} ({firstHuvId}) x{huvNum}"
             //);
 
-            var activeQuest = packet.Sender.Player.ActiveCharacter.ActiveQuest;
+            var activeQuest = packet.Sender.Player.ActiveCharacter.Quest;
 
             var ack = new RicePacket(181); //todo
             ack.Writer.Write(startPos); // struct XiVec4	m_StartPos;		 // this+0x2
@@ -52,7 +52,7 @@ namespace Rice.Server.Packets.Game
             ack.Writer.Write((ushort)huvNum); // unsigned short	m_huvSize;		 // this+0x1B
             for (int i = 0; i < huvNum; i++)
             {
-                ack.Writer.Write(packet.Sender.Player.ActiveCharacter.CarSerial); //unsigned short m_Serial;         // this+0x0
+                ack.Writer.Write(packet.Sender.Player.ActiveCharacter.Serial); //unsigned short m_Serial;         // this+0x0
                 ack.Writer.Write((ushort)(20397 + i)); //unsigned short m_CarSort;        // this+0x2
                 if ((activeQuest?.QuestInfo?.HuvLevel ?? 0) <= 0)
                 {

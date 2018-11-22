@@ -72,6 +72,11 @@ namespace Rice.Server.Structures.Resources
         [JsonProperty("capacity")] public float MitronCapacity;
         [JsonProperty("efficienty")] public float MitronEfficiency;
 
+        [JsonProperty("accel")] public int Acceleration;
+        [JsonProperty("boost")] public int Boost;
+        [JsonProperty("crash")] public int Durability;
+        [JsonProperty("speed")] public int Speed;
+
         public bool IsValidGrade() => Name.Length > 0;
     }
 

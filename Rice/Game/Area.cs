@@ -49,7 +49,7 @@ namespace Rice.Game
         public void BroadcastMovement(Player player, byte[] movement) // byte[] temporarily
         {
             var move = new RicePacket(0x21D); // 114 total length
-            move.Writer.Write(player.ActiveCharacter.CarSerial);
+            move.Writer.Write(player.ActiveCharacter.Serial);
             move.Writer.Write(movement);
 
             foreach (Player areaPlayer in players)

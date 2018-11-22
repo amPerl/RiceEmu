@@ -137,6 +137,10 @@ namespace Rice.Server.Packets.Game
             var ack = new RicePacket(90);
             ack.Writer.Write(vehicle.GetInfo());
             packet.Sender.Send(ack);
+
+            var stat = new RicePacket(760);
+            stat.Writer.Write(character.GetStatUpdate());
+            packet.Sender.Send(stat);
         }
     }
 }

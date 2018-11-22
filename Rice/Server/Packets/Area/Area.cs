@@ -31,7 +31,7 @@ namespace Rice.Server.Packets.Area
                 }
 
                 packet.Sender.Player = serverSerial.GetOwner();
-                packet.Sender.Player.ActiveCharacter.CarSerial = serial;
+                packet.Sender.Player.ActiveCharacter.Serial = serial;
                 packet.Sender.Player.AreaClient = packet.Sender;
             }
 

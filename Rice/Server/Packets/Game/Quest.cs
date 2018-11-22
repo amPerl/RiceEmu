@@ -34,7 +34,7 @@ namespace Rice.Server.Packets.Game
             var quest = Rice.Game.Quest.Retrieve(packet.Sender.Player.ActiveCharacter.CID, questId);
             quest = quest ?? Rice.Game.Quest.CreateEntry(packet.Sender.Player.ActiveCharacter.CID, questId);
 
-            packet.Sender.Player.ActiveCharacter.ActiveQuest = quest;
+            packet.Sender.Player.ActiveCharacter.Quest = quest;
 
             var ack = new RicePacket(263);
             ack.Writer.Write(quest.QID);
@@ -49,7 +49,7 @@ namespace Rice.Server.Packets.Game
             var questId = packet.Reader.ReadInt32();
             var totalTime = packet.Reader.ReadSingle();
 
-            var quest = packet.Sender.Player.ActiveCharacter.ActiveQuest;
+            var quest = packet.Sender.Player.ActiveCharacter.Quest;
             if (quest == null || quest.QID != questId)
             {
                 packet.Sender.Error("something's fucky");
@@ -70,7 +70,7 @@ namespace Rice.Server.Packets.Game
         {
             var questId = packet.Reader.ReadInt32();
 
-            var quest = packet.Sender.Player.ActiveCharacter.ActiveQuest;
+            var quest = packet.Sender.Player.ActiveCharacter.Quest;
             if (quest == null || quest.QID != questId)
             {
                 packet.Sender.Error("something's fucky");
@@ -80,7 +80,7 @@ namespace Rice.Server.Packets.Game
 
             quest.SetState(2);
             var rewards = quest.QuestInfo.GetRewards();
-            packet.Sender.Player.ActiveCharacter.ActiveQuest = null;
+            packet.Sender.Player.ActiveCharacter.Quest = null;
 
             int expGotten = quest.QuestInfo.Experience;
             int moneyGotten = quest.QuestInfo.Mito;
@@ -124,7 +124,7 @@ namespace Rice.Server.Packets.Game
         {
             var questId = packet.Reader.ReadInt32();
 
-            var quest = packet.Sender.Player.ActiveCharacter.ActiveQuest;
+            var quest = packet.Sender.Player.ActiveCharacter.Quest;
             if (quest == null || quest.QID != questId)
             {
                 packet.Sender.Error("something's fucky");
@@ -133,7 +133,7 @@ namespace Rice.Server.Packets.Game
             }
 
             quest.Fail();
-            packet.Sender.Player.ActiveCharacter.ActiveQuest = null;
+            packet.Sender.Player.ActiveCharacter.Quest = null;
 
             var ack = new RicePacket(269);
             ack.Writer.Write(questId);
@@ -145,7 +145,7 @@ namespace Rice.Server.Packets.Game
         {
             var questId = packet.Reader.ReadInt32();
 
-            var quest = packet.Sender.Player.ActiveCharacter.ActiveQuest;
+            var quest = packet.Sender.Player.ActiveCharacter.Quest;
             if (quest == null || quest.QID != questId)
             {
                 packet.Sender.Error("something's fucky");
@@ -154,7 +154,7 @@ namespace Rice.Server.Packets.Game
             }
 
             quest.Fail(true);
-            packet.Sender.Player.ActiveCharacter.ActiveQuest = null;
+            packet.Sender.Player.ActiveCharacter.Quest = null;
 
             var ack = new RicePacket(271);
             ack.Writer.Write(questId);
@@ -166,7 +166,7 @@ namespace Rice.Server.Packets.Game
         {
             var questId = packet.Reader.ReadInt32();
 
-            var quest = packet.Sender.Player.ActiveCharacter.ActiveQuest;
+            var quest = packet.Sender.Player.ActiveCharacter.Quest;
             if (quest == null || quest.QID != questId)
             {
                 packet.Sender.Error("something's fucky");

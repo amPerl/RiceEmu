@@ -33,8 +33,9 @@ namespace Rice.Game
         private List<ItemModInfo> PendingItemMods;
 
         public Area Area;
-        public Quest ActiveQuest;
-        public ushort CarSerial;
+        public Quest Quest;
+        public Vehicle Vehicle => Garage.FirstOrDefault(veh => veh.CarID == CurrentCarID);
+        public ushort Serial;
 
         private Character(Models.Character dbCharacter)
         {
@@ -381,6 +382,10 @@ namespace Rice.Game
             foreach (var itemMod in mods)
                 packet.Writer.Write(itemMod);
             client.Send(packet);
+
+            var stat = new RicePacket(760);
+            stat.Writer.Write(GetStatUpdate());
+            client.Send(stat);
         } 
 
         public CharInfo GetInfo()
@@ -503,6 +508,56 @@ namespace Rice.Game
                 var user = rc.Users.Find((long)uid);
                 return user.Characters.Select(ch => new Character(ch)).ToList();
             }
+        }
+
+        public StatUpdate GetStatUpdate()
+        {
+            var vehicleEntry = Vehicle.VehicleUpgradeEntry;
+            var itemsOnVehicle = Inventory
+                .Where(item => item.itemEntry is ItemTableEntry && item.curCarID == Vehicle.CarID)
+                .Select(item => item.itemEntry as ItemTableEntry);
+
+            int equipAccel = 0;
+            int equipDura = 0;
+            int equipSpeed = 0;
+            int equipBoost = 0;
+
+            foreach (var item in itemsOnVehicle)
+            {
+                switch (item.Category)
+                {
+                    case "accel":
+                        equipAccel += (int)item.BasePoints;
+                        break;
+                    case "crash":
+                        equipDura += (int)item.BasePoints;
+                        break;
+                    case "speed":
+                        equipSpeed += (int)item.BasePoints;
+                        break;
+                    case "boost":
+                        equipBoost += (int)item.BasePoints;
+                        break;
+                }
+            }
+
+            return new StatUpdate
+            {
+                BaseAcceleration = vehicleEntry.Acceleration,
+                BaseDurability = vehicleEntry.Durability,
+                BaseSpeed = vehicleEntry.Speed,
+                BaseBoost = vehicleEntry.Boost,
+
+                CharAcceleration = Level,
+                CharDurability = Level,
+                CharSpeed = Level,
+                CharBoost = Level,
+
+                EquipAcceleration = equipAccel,
+                EquipDurability = equipDura,
+                EquipSpeed = equipSpeed,
+                EquipBoost = equipBoost,
+            };
         }
     }
 }
